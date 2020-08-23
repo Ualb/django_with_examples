@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+# admin juieta12
 # Application definition
 
 INSTALLED_APPS = [

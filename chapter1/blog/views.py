@@ -3,8 +3,8 @@ from django.core.paginator import Paginator,  EmptyPage, PageNotAnInteger
 from django.core.mail import send_mail
 
 
-from .models import Post
-from .forms import EmailPostForm
+from .models import Post, Comment
+from .forms import EmailPostForm, CommentForm
 
 def post_list(request):
     posts = Post.published.all()
@@ -27,7 +27,26 @@ def post_detail(request, year, month, day, post):
                             publish__year=year,
                             publish__month=month, 
                             publish__day=day)
-    return render(request, 'blog/post/detail.html', {'post':post})
+
+    # lista de los comentarios activos para este post
+    comments = post.comments.filter(active=True)
+    if request.method == 'POST':
+        # un comentario fue posteado
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            # crear un objeto de comentario pero no guardarlo en la bd
+            new_comment = comment_form.save(commit=False)
+            # asignar el actual comentario al post
+            new_comment.post = post
+            # guardar el comentario
+            new_comment.save()
+        else:
+            comment_form = CommentForm()
+    return render(request, 
+                    'blog/post/detail.html', 
+                    {'post': post,
+                    'comments': new_comment,
+                    'comment_form':comment_form})
 
 def post_share(request, post_id):
     # obtener post por id

@@ -30,6 +30,8 @@ def post_detail(request, year, month, day, post):
 
     # lista de los comentarios activos para este post
     comments = post.comments.filter(active=True)
+    new_comment = None
+    
     if request.method == 'POST':
         # un comentario fue posteado
         comment_form = CommentForm(data=request.POST)
@@ -40,13 +42,14 @@ def post_detail(request, year, month, day, post):
             new_comment.post = post
             # guardar el comentario
             new_comment.save()
-        else:
-            comment_form = CommentForm()
+    else:
+        comment_form = CommentForm()
     return render(request, 
-                    'blog/post/detail.html', 
-                    {'post': post,
-                    'comments': new_comment,
-                    'comment_form':comment_form})
+                'blog/post/detail.html', 
+                {'post': post,
+                'comments': comments,
+                'new_comment': new_comment,
+                'comment_form': comment_form})
 
 def post_share(request, post_id):
     # obtener post por id

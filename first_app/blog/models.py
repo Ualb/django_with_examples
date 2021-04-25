@@ -30,7 +30,7 @@ class Post(models.Model):
 
     # modificando el query set mediante un manager
     objects = models.Manager()  # el default
-    published = PublishedManager()  # el modificado
+    published = PublishedManager()  # el modificado, osea
 
     class Meta:
         ordering = ('-publish',)

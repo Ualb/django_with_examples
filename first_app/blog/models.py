@@ -8,6 +8,7 @@ class PublishedManager(models.Manager):
     def get_queryset(self):
         return super(PublishedManager, self).get_queryset().filter(status='published')
 
+
 class Post(models.Model):
     STATUS_CHOICES = (
         ('draft', 'Draft'),
@@ -16,21 +17,20 @@ class Post(models.Model):
     title = models.CharField(max_length=250)
     slug = models.SlugField(max_length=250,
                             unique_for_date='publish')
-    author = models.ForeignKey(User, 
-                                on_delete=models.CASCADE,
-                                related_name='blog_post')
+    author = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               related_name='blog_post')
     body = models.TextField()
     publish = models.DateTimeField(default=timezone.now)
     created = models.DateTimeField(auto_now_add=True)
     update = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=10,
-                                choices=STATUS_CHOICES,
-                                default='draft')
+                              choices=STATUS_CHOICES,
+                              default='draft')
 
     # modificando el query set mediante un manager
-    objects = models.Manager() # el default
-    published = PublishedManager() # el modificado 
-    
+    objects = models.Manager()  # el default
+    published = PublishedManager()  # el modificado
 
     class Meta:
         ordering = ('-publish',)
@@ -39,17 +39,17 @@ class Post(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('blog:post_detail', 
-                        args=[self.publish.year, 
-                                self.publish.month, 
-                                self.publish.day, 
-                                self.slug])
+        return reverse('blog:post_detail',
+                       args=[self.publish.year,
+                             self.publish.month,
+                             self.publish.day,
+                             self.slug])
 
 
 class Comment(models.Model):
-    post = models.ForeignKey(Post, 
-                            on_delete=models.CASCADE,
-                            related_name='comments')
+    post = models.ForeignKey(Post,
+                             on_delete=models.CASCADE,
+                             related_name='comments')
     name = models.CharField(max_length=80)
     email = models.EmailField()
     body = models.TextField()
